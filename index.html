@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>由他工具文案生成神器</title>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f7;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #1d1d1f;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .intro-text {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .control-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .button {
+            background: #007AFF;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        .button:hover {
+            background: #0056b3;
+        }
+        #result {
+            white-space: pre-line;
+            line-height: 1.6;
+        }
+        select {
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            margin-right: 10px;
+        }
+        .tool-form {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            display: none;
+        }
+        .tool-form input, .tool-form textarea {
+            width: 100%;
+            margin: 8px 0;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .tool-form textarea {
+            height: 100px;
+        }
+        .category-select {
+            margin-right: 10px;
+        }
+        .copy-btn {
+            background: #5856D6;
+        }
+        .add-tool-btn {
+            background: #FF9500;
+        }
+        .export-image-btn {
+            background: #FF2D55;
+        }
+        .result-container {
+            margin-top: 20px;
+        }
+        .result-item {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .hook-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1d1d1f;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .tool-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f5f5f7;
+            border-radius: 8px;
+        }
+        .tool-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #1d1d1f;
+        }
+        .original-text, .rewritten-text {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+        .original-text {
+            color: #666;
+            font-size: 14px;
+        }
+        .rewritten-text {
+            color: #1d1d1f;
+            font-size: 16px;
+        }
+        .article-separator {
+            border-top: 2px dashed #ccc;
+            margin: 30px 0;
+            padding-top: 20px;
+        }
+        .article-container {
+            position: relative;
+        }
+        .article-number {
+            position: absolute;
+            top: -15px;
+            left: 0;
+            background: #007AFF;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+        .primary-btn {
+            background: #007AFF;
+            font-weight: bold;
+        }
+        .export-txt-btn {
+            background: #34C759;
+        }
+        .manage-btn {
+            background: #FF9500;
+        }
+        .knowledge-base-controls {
+            display: none;
+        }
+        .form-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .tab-btn {
+            padding: 8px 16px;
+            border: none;
+            background: #f5f5f7;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .tab-btn.active {
+            background: #007AFF;
+            color: white;
+        }
+        
+        .batch-info {
+            background: #f5f5f7;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .format-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            background: white;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .format-table th, .format-table td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        
+        .format-table th {
+            background: #f0f0f0;
+        }
+        
+        .template-link {
+            color: #007AFF;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 登录遮罩层 -->
+    <div id="loginOverlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+        background: rgba(0,0,0,0.8); z-index: 9999; display: flex; 
+        justify-content: center; align-items: center;">
+        <div class="login-container" style="background: white; padding: 30px; 
+            border-radius: 16px; width: 90%; max-width: 400px;">
+            <h2 style="text-align: center; margin-bottom: 20px;">由他工具文案生成神器</h2>
+            <div style="margin-bottom: 15px;">
+                <input type="text" id="username" placeholder="用户名" 
+                    style="width: 100%; padding: 10px; border: 1px solid #ddd; 
+                    border-radius: 8px; margin-bottom: 10px;">
+                <input type="password" id="password" placeholder="密码" 
+                    style="width: 100%; padding: 10px; border: 1px solid #ddd; 
+                    border-radius: 8px;">
+            </div>
+            <button onclick="login()" class="button" 
+                style="width: 100%; background: #007AFF;">登录</button>
+            <p style="text-align: center; margin-top: 15px; color: #666; font-size: 14px;">
+                关注微信公众号：由他工具箱<br>获取更多实用工具
+            </p>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>由他工具文案生成神器</h1>
+        <div class="intro-text">
+            专注分享真实有料的内容，更多实用工具搜索微信公众号：由他工具箱
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <select id="generateMode" class="category-select">
+                    <option value="selected">使用选定工具</option>
+                    <option value="random">随机选择工具</option>
+                </select>
+                <select id="toolCount" class="category-select">
+                    <option value="2">2个工具</option>
+                    <option value="3">3个工具</option>
+                    <option value="4">4个工具</option>
+                </select>
+                <select id="category" class="category-select">
+                    <option value="all">所有分类</option>
+                    <option value="pdf">PDF工具</option>
+                    <option value="ai">AI工具</option>
+                    <option value="video">视频工具</option>
+                    <option value="other">其他工具</option>
+                </select>
+                <button class="button" onclick="toggleToolSelector()">选择工具</button>
+            </div>
+
+            <div class="control-group">
+                <select id="batchCount" class="category-select">
+                    <option value="1">生成1篇</option>
+                    <option value="3">生成3篇</option>
+                    <option value="5">生成5篇</option>
+                    <option value="10">生成10篇</option>
+                </select>
+                <button class="button primary-btn" onclick="generateContent()">生成文案</button>
+            </div>
+
+            <div class="control-group">
+                <button class="button copy-btn" onclick="copyContent()">复制文案</button>
+                <button class="button export-txt-btn" onclick="exportToTxt()">导出文本</button>
+                <button class="button export-image-btn" onclick="exportToImage()">导出图片</button>
+            </div>
+
+            <div class="control-group">
+                <button class="button manage-btn" onclick="toggleToolForm()">添加工具</button>
+                <button class="button manage-btn" onclick="toggleManageTools()">管理工具</button>
+                <button class="button manage-btn" onclick="toggleManageHooks()">管理钩子</button>
+                <button class="button" onclick="AUTH.logout()" 
+                    style="background: #FF3B30;">退出登录</button>
+            </div>
+        </div>
+
+        <div class="tool-form" id="toolForm">
+            <h3>添加新工具</h3>
+            <div class="form-tabs">
+                <button class="tab-btn active" onclick="switchToolTab('single')">单个添加</button>
+                <button class="tab-btn" onclick="switchToolTab('batch')">批量导入</button>
+            </div>
+            <div id="singleToolForm">
+                <select id="newToolCategory">
+                    <option value="pdf">PDF工具</option>
+                    <option value="ai">AI工具</option>
+                    <option value="video">视频工具</option>
+                    <option value="other">其他工具</option>
+                </select>
+                <input type="text" id="newToolName" placeholder="工具名称">
+                <textarea id="newToolDescription" placeholder="工具描述"></textarea>
+                <button class="button" onclick="addNewTool()">保存</button>
+            </div>
+            <div id="batchToolForm" style="display: none;">
+                <div class="batch-info">
+                    <p>请按以下格式准备Excel或CSV文件：</p>
+                    <table class="format-table">
+                        <tr>
+                            <th>分类</th>
+                            <th>名称</th>
+                            <th>描述</th>
+                        </tr>
+                        <tr>
+                            <td>pdf</td>
+                            <td>工具1</td>
+                            <td>描述1</td>
+                        </tr>
+                    </table>
+                    <a href="#" onclick="downloadTemplate('tool')" class="template-link">下载模板</a>
+                </div>
+                <input type="file" id="batchToolFile" accept=".xlsx,.csv" style="display: none"
+                    onchange="handleBatchToolImport(event)">
+                <button class="button" onclick="document.getElementById('batchToolFile').click()">
+                    选择文件导入
+                </button>
+            </div>
+        </div>
+
+        <div id="result" class="result-container"></div>
+
+        <div id="toolSelector" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            background: white; padding: 20px; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.1); 
+            max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; z-index: 1000;">
+            <h3 style="margin-top: 0;">选择要使用的工具</h3>
+            <div id="toolList" style="margin: 15px 0;"></div>
+            <div style="margin-top: 15px;">
+                <button class="button" onclick="confirmToolSelection()">确认选择</button>
+                <button class="button" onclick="toggleToolSelector()" 
+                    style="margin-left: 10px; background: #666;">取消</button>
+            </div>
+        </div>
+
+        <div id="toolManager" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            background: white; padding: 20px; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.1); 
+            max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; z-index: 1000;">
+            <h3 style="margin-top: 0;">管理工具库</h3>
+            <div id="toolManagerList" style="margin: 15px 0;"></div>
+            <div style="margin-top: 15px;">
+                <button class="button" onclick="toggleToolForm()">添加工具</button>
+                <button class="button" onclick="toggleManageTools()" 
+                    style="margin-left: 10px; background: #666;">关闭</button>
+            </div>
+        </div>
+
+        <div id="hookManager" style="display: none;">
+            <h3 style="margin-top: 0;">管理钩子文案</h3>
+            <div class="form-tabs">
+                <button class="tab-btn active" onclick="switchHookTab('single')">单个添加</button>
+                <button class="tab-btn" onclick="switchHookTab('batch')">批量导入</button>
+            </div>
+            <div id="singleHookForm">
+                <div class="hook-input-group">
+                    <select id="hookToolCount" class="category-select">
+                        <option value="2">2个工具</option>
+                        <option value="3">3个工具</option>
+                        <option value="4">4个工具</option>
+                    </select>
+                    <input type="text" id="newHook" placeholder="输入新的钩子文案" 
+                        style="width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                    <button class="button" onclick="addHook()">添加钩子</button>
+                </div>
+            </div>
+            <div id="hookManagerList">
+                <div class="hook-section" id="hooks-2">
+                    <h4>2个工具的钩子文案</h4>
+                    <div class="hook-list"></div>
+                </div>
+                <div class="hook-section" id="hooks-3">
+                    <h4>3个工具的钩子文案</h4>
+                    <div class="hook-list"></div>
+                </div>
+                <div class="hook-section" id="hooks-4">
+                    <h4>4个工具的钩子文案</h4>
+                    <div class="hook-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        // 初始化时检查登录状态
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLoginStatus();
+        });
+        
+        // 处理知识库导入
+        async function handleImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const success = await KnowledgeBase.importFromFile(file);
+            if (success) {
+                alert('知识库导入成功！');
+                location.reload();
+            } else {
+                alert('知识库导入失败，请检查文件格式！');
+            }
+            event.target.value = '';
+        }
+
+        // 初始化时加载知识库
+        KnowledgeBase.load();
+    </script>
+</body>
+</html> 
